@@ -6,6 +6,7 @@
 <title>Studio Nails Milena Scharman | Manicure em Cananéia</title>
 <meta name="description" content="Manicure no Acaraú, em Cananéia (SP). Unhas firmes e brilhantes por mais tempo, materiais esterilizados. Nota 5,0 no Google. Agende pelo WhatsApp.">
 <meta name="theme-color" content="#F0287D">
+<script>document.documentElement.classList.add("js")</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,700;12..96,800&display=swap" rel="stylesheet">
@@ -71,7 +72,9 @@
 
   /* faixa de garantias */
   .faixa{background:var(--ameixa);color:var(--porcelana)}
-  .faixa ul{list-style:none;margin:0;padding:26px 0;display:flex;justify-content:space-between;gap:20px 40px;flex-wrap:wrap;font-weight:500}
+  .faixa{overflow:hidden}
+  .trilho{display:flex;width:max-content}
+  .faixa ul{list-style:none;margin:0;padding:26px 0;display:flex;gap:56px;padding-right:56px;font-weight:500;font-size:1.1rem;white-space:nowrap}
   .faixa li{display:flex;align-items:center;gap:10px}
   .faixa li::before{content:"";width:12px;height:16px;border-radius:var(--unha);background:var(--rosa);flex:none}
 
@@ -93,8 +96,8 @@
 
   /* galeria */
   .galeria{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;align-items:end}
-  .galeria .unha{aspect-ratio:3/4.4}
-  .galeria .unha:nth-child(2){transform:translateY(-48px)}
+  .galeria .unha{aspect-ratio:3/4.4;transform:perspective(900px) translateY(var(--y,0)) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+  .galeria .unha:nth-child(2){--y:-48px}
   .galeria-rodape{margin-top:32px;font-weight:500}
 
   /* depoimentos */
@@ -143,10 +146,68 @@
   }
   @media (max-width:600px){
     .galeria{gap:12px}
-    .galeria .unha:nth-child(2){transform:translateY(-24px)}
-    .fixo{display:flex;position:fixed;left:16px;right:16px;bottom:16px;z-index:10}
+    .galeria .unha:nth-child(2){--y:-24px}
+    .btn.fixo{display:flex;position:fixed;left:16px;right:16px;bottom:16px;z-index:10}
     .topo .btn{display:none}
-    .faixa ul{flex-direction:column}
+  }
+
+  /* ===== motion ===== */
+  .unha{isolation:isolate}
+  .unha::before{content:"";position:absolute;inset:-30% -60%;z-index:3;pointer-events:none;
+    background:linear-gradient(105deg,transparent 42%,rgba(255,255,255,.6) 50%,transparent 58%);transform:translateX(-100%)}
+  .btn{position:relative;overflow:hidden}
+  .btn::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.45) 50%,transparent 65%);transform:translateX(-120%);transition:transform .7s ease}
+  .btn:hover::after{transform:translateX(120%)}
+  .palavra{display:inline-block}
+
+  @media (prefers-reduced-motion:no-preference){
+    /* brilho do esmalte atravessando as unhas */
+    .unha::before{animation:brilho 6s cubic-bezier(.6,0,.3,1) infinite}
+    .hero-arte .mini::before{animation-delay:.6s}
+    .hero-arte .mini2::before{animation-delay:1.2s}
+    .galeria .unha:nth-child(2)::before{animation-delay:1.5s}
+    .galeria .unha:nth-child(3)::before{animation-delay:3s}
+    @keyframes brilho{0%,62%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+
+    /* hero: palavras sobem, unha se pinta, mini unhas saltam e flutuam */
+    .js h1 .palavra{opacity:0;transform:translateY(.5em) rotate(4deg);animation:sobe .8s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:calc(var(--i) * 90ms + 100ms)}
+    @keyframes sobe{to{opacity:1;transform:none}}
+    .js .hero p,.js .hero .acoes,.js .hero .google{opacity:0;animation:aparece .7s ease forwards}
+    .js .hero p{animation-delay:.55s}.js .hero .acoes{animation-delay:.7s}.js .hero .google{animation-delay:.85s}
+    @keyframes aparece{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+    .hero-arte .mini{animation:salta .7s cubic-bezier(.3,1.6,.5,1) 1s both, flutua 5s ease-in-out 1.7s infinite}
+    .hero-arte .mini2{animation:salta .7s cubic-bezier(.3,1.6,.5,1) 1.2s both, flutua 6s ease-in-out 1.9s infinite reverse}
+    @keyframes salta{from{transform:scale(0) rotate(-25deg)}to{transform:scale(1) rotate(0)}}
+    @keyframes flutua{0%,100%{translate:0 0;rotate:0deg}50%{translate:0 -12px;rotate:-6deg}}
+
+    /* faixa rolando */
+    .trilho{animation:rolar 30s linear infinite}
+    .faixa:hover .trilho{animation-play-state:paused}
+    @keyframes rolar{to{transform:translateX(-50%)}}
+
+    /* revelações ao rolar */
+    .js h2[data-revela] .palavra{opacity:0;transform:translateY(.45em);transition:opacity .6s ease,transform .7s cubic-bezier(.2,.8,.2,1);transition-delay:calc(var(--i) * 70ms)}
+    .js h2.visivel .palavra{opacity:1;transform:none}
+
+    .js .lista[data-revela] .item{clip-path:inset(100% 0 0 0 round 28px);transition:clip-path .9s cubic-bezier(.7,0,.2,1)}
+    .js .lista.visivel .item{clip-path:inset(0 0 0 0 round 28px)}
+    .js .lista .item:nth-child(2){transition-delay:.12s}.js .lista .item:nth-child(3){transition-delay:.24s}
+    .js .lista .item:nth-child(4){transition-delay:.36s}.js .lista .item:nth-child(5){transition-delay:.48s}
+
+    .js .galeria[data-revela] .unha{clip-path:inset(100% 0 0 0);transition:clip-path 1s cubic-bezier(.7,0,.2,1),transform .5s cubic-bezier(.2,.8,.2,1)}
+    .js .galeria.visivel .unha{clip-path:inset(0 0 0 0)}
+    .js .galeria .unha:nth-child(2){transition-delay:.15s,0s}.js .galeria .unha:nth-child(3){transition-delay:.3s,0s}
+
+    .js .grande[data-revela] .palavra{opacity:.18;transition:opacity .4s ease;transition-delay:calc(var(--i) * 45ms)}
+    .js .grande.visivel .palavra{opacity:1}
+
+    .js .menores[data-revela] figure,.js .mapa[data-revela]{opacity:0;transform:translateY(30px) scale(.97);transition:opacity .7s ease,transform .8s cubic-bezier(.2,.8,.2,1)}
+    .js .menores.visivel figure,.js .mapa.visivel{opacity:1;transform:none}
+    .js .menores figure:nth-child(2){transition-delay:.12s}.js .menores figure:nth-child(3){transition-delay:.24s}
+
+    /* botão fixo entra depois do hero */
+    .fixo{transition:transform .5s cubic-bezier(.3,1.4,.5,1)}
+    .fixo.escondido{transform:translateY(140%)}
   }
 </style>
 </head>
@@ -170,7 +231,7 @@
   <main>
     <div class="hero">
       <div>
-        <h1>Unhas que duram e brilham</h1>
+        <h1 data-palavras>Unhas que duram e brilham</h1>
         <p>Manicure no Acaraú, em Cananéia, com a Milena Scharman. Unha firme e linda por semanas, sem precisar de alongamento grande.</p>
         <div class="acoes">
           <a class="btn" href="https://wa.me/5513996437052?text=Ol%C3%A1%2C%20Milena!%20Quero%20agendar%20um%20hor%C3%A1rio." target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#zap"/></svg>Agendar pelo WhatsApp</a>
@@ -190,20 +251,30 @@
 </div>
 
 <div class="faixa">
-  <ul class="wrap">
-    <li>Materiais esterilizados</li>
-    <li>Atendimento com hora marcada</li>
-    <li>Nota 5,0 no Google</li>
-    <li>Acaraú, Cananéia</li>
-  </ul>
+  <div class="trilho">
+    <ul>
+      <li>Materiais esterilizados</li>
+      <li>Atendimento com hora marcada</li>
+      <li>Nota 5,0 no Google</li>
+      <li>Unhas firmes por semanas</li>
+      <li>Acaraú, Cananéia</li>
+    </ul>
+    <ul aria-hidden="true">
+      <li>Materiais esterilizados</li>
+      <li>Atendimento com hora marcada</li>
+      <li>Nota 5,0 no Google</li>
+      <li>Unhas firmes por semanas</li>
+      <li>Acaraú, Cananéia</li>
+    </ul>
+  </div>
 </div>
 
 <section id="servicos">
   <div class="servicos">
     <div class="wrap" style="padding:88px 0">
-      <h2>O que a Milena faz por você</h2>
+      <h2 data-revela data-palavras>O que a Milena faz por você</h2>
       <p class="sub">Me chama no WhatsApp para saber valores e qual serviço combina com a sua unha.</p>
-      <div class="lista">
+      <div class="lista" data-revela>
         <div class="item item--destaque">
           <h3>Fortalecimento</h3>
           <p>Para quem quer uma unha firme e bonita por mais tempo, sem alongamento grande. O serviço que as clientes mais elogiam.</p>
@@ -220,9 +291,9 @@
 
 <section id="trabalhos">
   <div class="wrap">
-    <h2>Feito no studio</h2>
+    <h2 data-revela data-palavras>Feito no studio</h2>
     <p class="sub">Alguns trabalhos recentes da Milena.</p>
-    <div class="galeria">
+    <div class="galeria" data-revela>
       <div class="unha"><img loading="lazy" alt="Unhas feitas no studio" src="https://lh3.googleusercontent.com/gps-cs-s/ANWiy9QA-wmX3qPjJkCWyjDiNch3EPXjm_UvwiFaEPwcb2hBTYsKGRd_VAInR3Urv9VB8LH30OL5fWp2XSp1J5yK_6xjMRIosJdJuJCjY9YOd7V-0p4oim8EjhIFCuiNtnbc1-G-UbMXKhj7032z=w600-h1066-k-no"></div>
       <div class="unha"><img loading="lazy" alt="Unhas feitas no studio" src="https://lh3.googleusercontent.com/gps-cs-s/ANWiy9QINN-ra6Kx9X1rmlhN34CKWmymTNnfzaQUKr8IvVgMKH2OY6PndFzIKJX1Rxi0hBRBAb7OMLUHhZ5fKpJzKQ2nsLQm-CxVbehZvZwdz8XDRQ8WlyJpPe0Uq6CA6JAAS7IVnkf2jbFlHVmY=w600-h1066-k-no"></div>
       <div class="unha"><img loading="lazy" alt="Unhas feitas no studio" src="https://lh3.googleusercontent.com/gps-cs-s/ANWiy9TFXmVbHTJGHYr9BUsQz4hHYU7fdOVG4DfF6PT00cTGap-4i6gcnE9KFZRyUkX0e_E6Hl_AOg7tGYTayi9pevPntWRVu0ZsHMrgAgUu-vSc9GSfRBbzzxs0LQiNSYWKbtm8-e-0wwuesw4=w600-h1066-k-no"></div>
@@ -233,10 +304,10 @@
 
 <section class="depo">
   <div class="wrap">
-    <h2>Quem faz, volta</h2>
-    <p class="grande">Atendimento sensacional, profissional incrível e resolveu a minha maior dificuldade em ter uma unha firme e linda por mais tempo.</p>
+    <h2 data-revela data-palavras>Quem faz, volta</h2>
+    <p class="grande" data-revela data-palavras>Atendimento sensacional, profissional incrível e resolveu a minha maior dificuldade em ter uma unha firme e linda por mais tempo.</p>
     <p class="quem">Aromas Casa da Praia, no Google</p>
-    <div class="menores">
+    <div class="menores" data-revela>
       <figure><blockquote>A Milena é uma excelente profissional, muito dedicada e caprichosa. Super indico. Pode confiar.</blockquote><figcaption>Rafa Castro</figcaption></figure>
       <figure><blockquote>Tem cuidado com higiene, materiais são devidamente esterilizados.</blockquote><figcaption>Cliente no Google</figcaption></figure>
       <figure><blockquote>Uma excelente profissional, super recomendo, amei a experiência 😍</blockquote><figcaption>Eliete Pereira (Lih)</figcaption></figure>
@@ -247,7 +318,7 @@
 <section id="visita">
   <div class="wrap visita">
     <div>
-      <h2>Vem fazer as unhas</h2>
+      <h2 data-revela data-palavras>Vem fazer as unhas</h2>
       <dl class="info">
         <div><dt>Endereço</dt><dd>R. Joaquim Pereira, 287, Acaraú, Cananéia, SP</dd></div>
         <div><dt>Horário</dt><dd>A partir das 9h, com hora marcada. Confirme os dias pelo WhatsApp.</dd></div>
@@ -258,7 +329,7 @@
         <a href="https://maps.app.goo.gl/tjkoCzAMo11eH1keA" target="_blank" rel="noopener" style="font-weight:700">Abrir no Google Maps</a>
       </div>
     </div>
-    <div class="mapa">
+    <div class="mapa" data-revela>
       <iframe title="Mapa do Studio Nails Milena Scharman" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q=-25.0111128,-47.9358801&z=16&output=embed"></iframe>
     </div>
   </div>
@@ -280,6 +351,50 @@
     img.addEventListener('error', falhou);
     if (img.complete && img.naturalWidth === 0) falhou();
   });
+
+  const movimento = matchMedia('(prefers-reduced-motion: no-preference)').matches;
+
+  // separa títulos em palavras para animar
+  document.querySelectorAll('[data-palavras]').forEach(el => {
+    const texto = el.textContent.trim();
+    el.setAttribute('aria-label', texto);
+    el.innerHTML = texto.split(/\s+/).map((w, i) => `<span class="palavra" aria-hidden="true" style="--i:${i}">${w}</span>`).join(' ');
+  });
+
+  // revela ao rolar
+  const obs = new IntersectionObserver(entradas => {
+    entradas.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visivel'); obs.unobserve(e.target); } });
+  }, { threshold: .2, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('[data-revela]').forEach(el => obs.observe(el));
+
+  // contador da nota
+  const nota = document.querySelector('.google b');
+  if (nota && movimento) {
+    let t0; const dur = 1100;
+    const passo = t => { t0 ??= t; const k = Math.min((t - t0) / dur, 1);
+      nota.textContent = (5 * (1 - Math.pow(1 - k, 3))).toFixed(1).replace('.', ',');
+      if (k < 1) requestAnimationFrame(passo); };
+    setTimeout(() => requestAnimationFrame(passo), 900);
+  }
+
+  // galeria inclina seguindo o mouse
+  if (movimento && matchMedia('(pointer: fine)').matches) {
+    document.querySelectorAll('.galeria .unha').forEach(u => {
+      u.addEventListener('pointermove', e => {
+        const r = u.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+        u.style.setProperty('--ry', (x * 14) + 'deg'); u.style.setProperty('--rx', (-y * 14) + 'deg');
+      });
+      u.addEventListener('pointerleave', () => { u.style.setProperty('--rx', '0deg'); u.style.setProperty('--ry', '0deg'); });
+    });
+  }
+
+  // botão fixo aparece depois que o botão do topo sai da tela
+  const fixo = document.querySelector('.fixo'), heroBtn = document.querySelector('.hero .btn');
+  if (fixo && heroBtn) {
+    fixo.classList.add('escondido');
+    new IntersectionObserver(([e]) => fixo.classList.toggle('escondido', e.isIntersecting)).observe(heroBtn);
+  }
 </script>
 </body>
 </html>
